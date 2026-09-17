@@ -51,7 +51,7 @@ public class AdvanceAgent : Agent
 
         if (hunterThreat == null)
         {
-            // hunterThreat = FindFirstObjectByType<HunterAgent>();
+             hunterThreat = FindFirstObjectByType<HunterAgent>();
         }
 
         Vector3 randomDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
@@ -91,7 +91,7 @@ public class AdvanceAgent : Agent
         if (nearestPOI != null)
         {
             currentSteering = SteeringModes.Arrive;
-            return Arrive(nearestPOI.transform.position);
+            return Arrive(nearestPOI.transform.position) + CalculateSeparation(allAgents, _separationRadius) * separationWhight;
         }
 
         currentSteering = SteeringModes.Flocking;
@@ -105,22 +105,47 @@ public class AdvanceAgent : Agent
              + CalculateCohesion(allAgents, _cohesionRadius) * cohesionWhight;
     }
 
-    private Vector3 CalculateSeparation(List<AdvanceAgent> list, float radius)
+    private Vector3 CalculateSeparation(
+    List<AdvanceAgent> list,
+    float radius)
     {
-        Vector3 desired = default;
+        Vector3 separation = Vector3.zero;
         int count = 0;
-        foreach (var agent in list)
+
+        foreach (AdvanceAgent agent in list)
         {
-            if (agent == this) continue;
-            if (InRange(agent.transform.position, radius))
+            if (agent == null || agent == this)
+
+             continue;
+
+            Vector3 away = transform.position - agent.transform.position;
+            away.y = 0f;
+
+            float distance = away.magnitude;
+
+            if (distance >= radius)
+
+              continue;
+
+            if (distance < 0.001f)
             {
-                desired += (agent.transform.position - transform.position);
-                count++;
+               away = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
+
+               separation += away.normalized;
             }
+            else
+            {
+                separation += away.normalized * (radius - distance) / radius;
+            }
+
+            count++;
         }
-        if (count == 0) return Vector3.zero;
-        desired /= count;
-        return CalculateSteeringForce(-desired.normalized * maxSpeed);
+
+        if (count == 0)
+            return Vector3.zero;
+
+        Vector3 desired = separation.normalized * maxSpeed;
+        return CalculateSteeringForce(desired);
     }
 
     private Vector3 CalculateAlignment(List<AdvanceAgent> list, float radius)

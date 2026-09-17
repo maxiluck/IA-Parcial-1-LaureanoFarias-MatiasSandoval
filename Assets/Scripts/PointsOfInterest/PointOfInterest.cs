@@ -6,8 +6,6 @@ public class PointOfInterest : MonoBehaviour
     [Header("Configuración de Vida")]
     [SerializeField] private float maxHealth = 100f;
     private float _currentHealth;
-
-    // Lista estática para controlar el límite de 5 y consultar el más cercano
     public static List<PointOfInterest> ActivePOIs { get; private set; } = new List<PointOfInterest>();
 
     private void Awake()
@@ -25,7 +23,6 @@ public class PointOfInterest : MonoBehaviour
         }
     }
 
-    // Busca el POI más próximo a la posición solicitada
     public static PointOfInterest GetNearestPOI(Vector3 fromPosition)
     {
         return GetNearestPOI(fromPosition, float.PositiveInfinity);

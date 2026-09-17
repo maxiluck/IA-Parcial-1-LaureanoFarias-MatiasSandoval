@@ -20,6 +20,7 @@ public class BoidHealth : MonoBehaviour
     private Collider _collider;
     private Renderer _renderer;
     private float _damageTimer;
+    private float _spawnHeight;
 
     public bool IsDead { get; private set; }
     public static System.Collections.Generic.List<BoidHealth> DeadBoids { get; private set; } = new();
@@ -30,6 +31,7 @@ public class BoidHealth : MonoBehaviour
         _collider = GetComponent<Collider>();
         _renderer = GetComponentInChildren<Renderer>();
         _currentHealth = maxHealth;
+        _spawnHeight = transform.position.y;
     }
 
     private void Update()
@@ -93,7 +95,7 @@ public class BoidHealth : MonoBehaviour
 
         float randomX = Random.Range(-25f, 25f);
         float randomZ = Random.Range(-15f, 15f);
-        transform.position = new Vector3(randomX, 0f, randomZ);
+        transform.position = new Vector3(randomX, _spawnHeight, randomZ);
 
         _currentHealth = maxHealth;
         IsDead = false;
