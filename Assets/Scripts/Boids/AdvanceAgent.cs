@@ -50,9 +50,11 @@ public class AdvanceAgent : Agent
             gameObject.AddComponent<BoidHealth>();
 
         if (hunterThreat == null)
-            //hunterThreat = FindFirstObjectByType<HunterAgent>();
+        {
+            // hunterThreat = FindFirstObjectByType<HunterAgent>();
+        }
 
-        Vector3 randomDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+        Vector3 randomDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
         _velocity += randomDirection.normalized * maxSpeed;
     }
 
